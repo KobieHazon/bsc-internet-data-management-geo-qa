@@ -19,6 +19,11 @@ g = rdflib.Graph()
 # ~~~~~~~~~~~~Ontology Creation Functions~~~~~~~~~~~~~~~
 
 
+def ascii_text(value):
+    """Return ASCII-safe text without changing the value to bytes."""
+    return value.encode('ascii', 'ignore').decode('ascii')
+
+
 def get_bday_entity(url):
     person_page = requests.get(url)
     person_html = lxml.html.fromstring(person_page.content)
@@ -40,7 +45,7 @@ def process_country(url):
         return
     name = name_xpath[0]
     country_entity = rdflib.URIRef(
-        wiki_dom + name.replace(" ", "_").lower().encode('ascii', 'ignore'))
+        wiki_dom + ascii_text(name).replace(" ", "_").lower())
 
     # ~~~~~~~~~~~GET COUNTRY POPULATION~~~~~~~~~~~~~~~~
     population_xpath = country_html.xpath(
@@ -74,7 +79,7 @@ def process_country(url):
     capital_xpath = country_html.xpath(
         "//table[contains(@class,'infobox')]/tbody//tr[./th[contains(.//text(), 'Capital')]]/td//text()")
     if capital_xpath:
-        capital_xpath = [item.strip().encode('ascii', 'ignore')
+        capital_xpath = [ascii_text(item.strip())
                          for item in capital_xpath if item.strip() != ""]
         country_capital = capital_xpath[0]
         if (country_capital == "None"):
@@ -91,7 +96,7 @@ def process_country(url):
     government_xpath = country_html.xpath(
         "//table[contains(@class,'infobox')]/tbody//tr[./th[contains(.//text(), 'Government')]]/td//text()")
     if government_xpath:
-        government_xpath = [item.strip().replace(" ", "_").encode('ascii', 'ignore')
+        government_xpath = [ascii_text(item.strip()).replace(" ", "_")
                             for item in government_xpath if ("[" not in item) and item.strip() != ""]
         country_government = "_".join(government_xpath).lower()
         government_entity = Literal(country_government)
@@ -101,7 +106,7 @@ def process_country(url):
     president_xpath = country_html.xpath(
         "//table[contains(@class,'infobox')]/tbody//tr[./th[.//text() = 'President']]/td//text()")
     if president_xpath:
-        president_xpath = [item.strip().encode('ascii', 'ignore')
+        president_xpath = [ascii_text(item.strip())
                            for item in president_xpath if item.strip() != ""]
         country_president = president_xpath[0].replace(" ", "_").lower()
         president_url = wiki_dom + country_html.xpath(
@@ -116,7 +121,7 @@ def process_country(url):
     pm_xpath = country_html.xpath(
         "//table[contains(@class,'infobox')]/tbody//tr[./th[.//text() = 'Prime Minister']]/td//text()")
     if pm_xpath:
-        pm_xpath = [item.strip().encode('ascii', 'ignore')
+        pm_xpath = [ascii_text(item.strip())
                     for item in pm_xpath if item.strip() != ""]
         country_pm = pm_xpath[0].replace(" ", "_").lower()
         pm_url = wiki_dom + country_html.xpath(
@@ -229,4 +234,5 @@ def main():
         answer_question(sys.argv[2].lower())
 
 
-main()
+if __name__ == "__main__":
+    main()
