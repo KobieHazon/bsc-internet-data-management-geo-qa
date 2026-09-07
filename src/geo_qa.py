@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import rdflib
 from rdflib import XSD, Literal
 import requests
@@ -185,7 +187,7 @@ def person_query(person, type):
 
 
 def answer_question(ques):
-    g.parse("ontology.nt", format="nt")
+    g.parse(Path(__file__).resolve().parents[1] / "data" / "ontology.nt", format="nt")
     ques_words = ques.split(" of ", 1)
 
     if len(ques_words) == 2:

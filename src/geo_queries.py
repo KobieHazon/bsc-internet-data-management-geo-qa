@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import rdflib
 
 wiki_dom = "https://en.wikipedia.org/"
@@ -16,7 +18,7 @@ query4 = "select (count(?country) as ?country_count) where { \
 FILTER CONTAINS(LCASE(str(?government)), \"monarchy\") }"
 
 g = rdflib.Graph()
-g.parse("ontology.nt", format="nt")
+g.parse(Path(__file__).resolve().parents[1] / "data" / "ontology.nt", format="nt")
 print("#############################################################")
 print("query1:")
 print(list(g.query(query1))[0]['pm_count'])
