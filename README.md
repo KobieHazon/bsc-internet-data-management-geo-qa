@@ -1,6 +1,6 @@
 # Internet Data Management: Geographic QA Ontology
 
-My CS BSc coursework.
+A historical archive of my CS BSc coursework.
 
 ## Project Summary
 
