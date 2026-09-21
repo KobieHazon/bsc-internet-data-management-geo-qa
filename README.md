@@ -1,6 +1,8 @@
 # Internet Data Management: Geographic QA Ontology
 
-A historical archive of my CS BSc coursework.
+The supplied exercise files are in `assignment/`. My code is kept separately, along with the data and answers.
+
+Submission ZIP files, Apple metadata, official solution PDFs, and exported answer documents and PDFs are not included.
 
 ## Project Summary
 
@@ -9,12 +11,6 @@ Python scripts that scrape country pages into an RDF-style geographic ontology a
 ## Tech Stack
 
 Python 3, requests, lxml, rdflib, RDF/N-Triples, XPath, geographic QA.
-
-## Provenance
-
-The supplied exercise material is preserved under `assignment/`. Recovered authored source, data, and answers are organized separately; earlier commits remain unchanged.
-
-Submission ZIP wrappers, Apple metadata, official solution PDFs, and office-document/PDF answer exports were intentionally omitted from this repository.
 
 ## Validate
 
