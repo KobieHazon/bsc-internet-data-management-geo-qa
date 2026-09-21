@@ -17,7 +17,6 @@ Python 3, requests, lxml, rdflib, RDF/N-Triples, XPath, geographic QA.
 Run:
 
 ```sh
-make check
 make test
 ```
 
@@ -41,8 +40,8 @@ My submission with Adi Eldar is in [written-answers.pdf](solution/written-answer
 - `data/`: Input data and test fixtures.
 - `solution/`: Written answers.
 - `tests/`: Executable regression tests.
-- `scripts/`: Repository checks and optional live-web tests.
+- `scripts/`: Bounded live-web tests.
 
-Run `make check` and `make test` from the repository root. The tests use local fixtures; they do not scrape live websites.
+Run `make test` from the repository root. The tests use local fixtures; they do not scrape live websites.
 
 Run the saved-data queries with `uv run --no-project --with-requirements requirements.txt python src/geo_queries.py`.
