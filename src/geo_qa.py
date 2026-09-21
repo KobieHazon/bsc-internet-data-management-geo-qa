@@ -1,8 +1,9 @@
 from pathlib import Path
+from urllib.parse import urljoin
 
 import rdflib
 from rdflib import XSD, Literal
-import requests
+import public_web
 import sys
 import lxml.html
 import re
@@ -27,7 +28,7 @@ def ascii_text(value):
 
 
 def get_bday_entity(url):
-    person_page = requests.get(url)
+    person_page = public_web.get(url)
     person_html = lxml.html.fromstring(person_page.content)
     bday_xpath = person_html.xpath(
         infobox_prefix + "//*[@class = 'bday']/text()")
@@ -38,7 +39,7 @@ def get_bday_entity(url):
 
 
 def process_country(url):
-    country_page = requests.get(wiki_dom + url)
+    country_page = public_web.get(urljoin(wiki_dom, url))
     country_html = lxml.html.fromstring(country_page.content)
 
     # ~~~~~~~~~~~GET COUNTRY NAME~~~~~~~~~~~~~~~~
@@ -111,8 +112,8 @@ def process_country(url):
         president_xpath = [ascii_text(item.strip())
                            for item in president_xpath if item.strip() != ""]
         country_president = president_xpath[0].replace(" ", "_").lower()
-        president_url = wiki_dom + country_html.xpath(
-            "//table[contains(@class,'infobox')]/tbody//tr[./th[.//text() = 'President']]/td//@href")[0]
+        president_url = urljoin(wiki_dom, country_html.xpath(
+            "//table[contains(@class,'infobox')]/tbody//tr[./th[.//text() = 'President']]/td//@href")[0])
         bday_entity = get_bday_entity(president_url)
         president_entity = rdflib.URIRef(wiki_dom + country_president)
         if (bday_entity != None):
@@ -126,8 +127,8 @@ def process_country(url):
         pm_xpath = [ascii_text(item.strip())
                     for item in pm_xpath if item.strip() != ""]
         country_pm = pm_xpath[0].replace(" ", "_").lower()
-        pm_url = wiki_dom + country_html.xpath(
-            "//table[contains(@class,'infobox')]/tbody//tr[./th[.//text() = 'Prime Minister']]/td//@href")[0]
+        pm_url = urljoin(wiki_dom, country_html.xpath(
+            "//table[contains(@class,'infobox')]/tbody//tr[./th[.//text() = 'Prime Minister']]/td//@href")[0])
         pm_entity = rdflib.URIRef(wiki_dom + country_pm)
         bday_entity = get_bday_entity(pm_url)
         if (bday_entity != None):
@@ -135,13 +136,21 @@ def process_country(url):
         g.add((country_entity, pm_relation, pm_entity))
 
 
-def process_country_list(url):
-    countries_page = requests.get(url)
+def process_country_list(url, max_countries=None):
+    countries_page = public_web.get(url)
     countries_html = lxml.html.fromstring(countries_page.content)
-    countries_urls = countries_html.xpath(
-        "//table[./caption[contains(./b/text(), \"Countries\")]]/tbody//table[./@id = \"main\"]//span[./@class = 'flagicon']/following-sibling::a[1]/@href")
-    for url in countries_urls:
-        process_country(url)
+    # Select the country column by its heading, not an obsolete nested table.
+    tables = countries_html.xpath("//table[.//th[contains(., 'Country or territory')]]")
+    if not tables:
+        raise ValueError("Country population table not found")
+    countries_urls = tables[0].xpath(".//tr[td]/td[1]//a[@href][1]/@href")
+    countries_urls = list(dict.fromkeys(urljoin(url, item) for item in countries_urls
+                                       if 'World_population' not in item))
+    if not countries_urls:
+        raise ValueError("Country population table has no country links")
+    for country_url in countries_urls[:max_countries]:
+        process_country(country_url)
+    return len(countries_urls[:max_countries])
 
 # ~~~~~~~~~~~~~Question Answering Functions~~~~~~~~~~~~~
 

@@ -17,21 +17,21 @@ class GeoOntologyTests(unittest.TestCase):
 
     def test_country_generation_keeps_ascii_values_as_text(self):
         pages = {
-            "https://en.wikipedia.org//wiki/Fixtureland": b"""<html><body>
+            "https://en.wikipedia.org/wiki/Fixtureland": b"""<html><body>
               <h1 id="firstHeading">Fixtureland</h1>
               <table class="infobox"><tbody>
                 <tr><th>Population</th></tr><tr><td>12,345</td></tr>
                 <tr><th>Area</th><td>100 km2</td></tr>
                 <tr><th>Capital</th><td>Fixture City</td></tr>
                 <tr><th>Government</th><td>Unitary republic</td></tr>
-                <tr><th>President</th><td><a href="/wiki/Alice">Alice Example</a></td></tr>
+                <tr><th>President</th><td><a href="https://en.wikipedia.org/wiki/Alice">Alice Example</a></td></tr>
                 <tr><th>Prime Minister</th><td><a href="/wiki/Bob">Bob Example</a></td></tr>
               </tbody></table>
             </body></html>""",
-            "https://en.wikipedia.org//wiki/Alice": b"""<html><body>
+            "https://en.wikipedia.org/wiki/Alice": b"""<html><body>
               <table class="infobox"><tbody><tr><td><span class="bday">1980-01-02</span></td></tr></tbody></table>
             </body></html>""",
-            "https://en.wikipedia.org//wiki/Bob": b"""<html><body>
+            "https://en.wikipedia.org/wiki/Bob": b"""<html><body>
               <table class="infobox"><tbody><tr><td><span class="bday">1975-03-04</span></td></tr></tbody></table>
             </body></html>""",
         }
@@ -39,7 +39,7 @@ class GeoOntologyTests(unittest.TestCase):
         def fixture_get(url):
             return FixtureResponse(pages[url])
 
-        with patch.object(geo_qa.requests, "get", side_effect=fixture_get):
+        with patch.object(geo_qa.public_web, "get", side_effect=fixture_get):
             geo_qa.process_country("/wiki/Fixtureland")
 
         wiki = geo_qa.wiki_dom

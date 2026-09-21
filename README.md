@@ -1,8 +1,8 @@
 # Internet Data Management: Geographic QA Ontology
 
-The supplied exercise files are in `assignment/`. My code is kept separately, along with the data and answers.
+- Authors: Kobie Hazon and Adi Eldar.
 
-Submission ZIP files, Apple metadata, official solution PDFs, and exported answer documents and PDFs are not included.
+The supplied exercise files are in `assignment/`. My code is kept separately, along with the data and answers.
 
 ## Project Summary
 
@@ -28,16 +28,20 @@ uv venv
 uv pip install -r requirements.txt
 ```
 
-The repository check is static. The regression test exercises ontology generation against local HTML fixtures without network access. Original scraping scripts may require live web access if run directly.
+`make test` exercises ontology generation and queries with local HTML fixtures. `make test-live` makes a small number of anonymous requests to Wikipedia, builds country and linked-person triples, and checks the resulting capital query. It uses timeouts, a request limit, and no account credentials. Live page content can change.
+
+## Written answers
+
+My submission with Adi Eldar is in [written-answers.pdf](solution/written-answers.pdf).
 
 ## Repository layout
 
-- `src/`: authored Python scripts, preserving the coursework filenames and sibling imports.
-- `data/`: recovered reference data or HTML/CSV fixtures.
-- `assignment/`: supplied exercise material, unchanged.
-- `tests/` and `scripts/`: offline regression checks and repository validation.
-- `results/` or `solution/` (where present): recovered outputs and written/XML answers.
-- `run-results/` (where used): ignored output from new runs, separate from recovered evidence.
+- `src/`: Python implementations.
+- `assignment/`: Exercise briefs and supplied inputs.
+- `data/`: Input data and test fixtures.
+- `solution/`: Written answers.
+- `tests/`: Executable regression tests.
+- `scripts/`: Repository checks and optional live-web tests.
 
 Run `make check` and `make test` from the repository root. The tests use local fixtures; they do not scrape live websites.
 
